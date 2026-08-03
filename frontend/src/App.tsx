@@ -1,122 +1,156 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
-import './App.css'
+import { useState } from 'react';
+import './App.css';
 
-function App() {
-  const [count, setCount] = useState(0)
-
-  return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.tsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
-
-      <div className="ticks"></div>
-
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
-
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
-  )
+interface Event {
+  id: number;
+  title: string;
+  category: 'Movies' | 'Concerts' | 'Sports' | 'Drama';
+  date: string;
+  location: string;
+  price: number;
+  image: string;
+  rating: number;
 }
 
-export default App
+const SAMPLE_EVENTS: Event[] = [
+  {
+    id: 1,
+    title: 'Neon Horizon World Tour',
+    category: 'Concerts',
+    date: 'Aug 24, 2026',
+    location: 'Grand Arena, NY',
+    price: 85,
+    rating: 4.9,
+    image: 'https://images.unsplash.com/photo-1470225620780-dba8ba36b745?auto=format&fit=crop&w=600&q=80',
+  },
+  {
+    id: 2,
+    title: 'Cyberpunk: Retribution',
+    category: 'Movies',
+    date: 'Aug 18, 2026',
+    location: 'PVR IMAX Screen 4',
+    price: 18,
+    rating: 4.7,
+    image: 'https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?auto=format&fit=crop&w=600&q=80',
+  },
+  {
+    id: 3,
+    title: 'Championship Finals 2026',
+    category: 'Sports',
+    date: 'Sep 02, 2026',
+    location: 'Metropolitan Stadium',
+    price: 120,
+    rating: 4.8,
+    image: 'https://images.unsplash.com/photo-1574629810360-7efbbe195018?auto=format&fit=crop&w=600&q=80',
+  },
+  {
+    id: 4,
+    title: 'The Phantom Opera',
+    category: 'Drama',
+    date: 'Sep 10, 2026',
+    location: 'Royal Broadway Theater',
+    price: 65,
+    rating: 4.6,
+    image: 'https://images.unsplash.com/photo-1507676184212-d03ab07a01bf?auto=format&fit=crop&w=600&q=80',
+  },
+];
+
+const CATEGORIES = ['All', 'Movies', 'Concerts', 'Sports', 'Drama'];
+
+export default function App() {
+  const [selectedCategory, setSelectedCategory] = useState<string>('All');
+  const [searchQuery, setSearchQuery] = useState<string>('');
+
+  const filteredEvents = SAMPLE_EVENTS.filter((event) => {
+    const matchesCategory =
+      selectedCategory === 'All' || event.category === selectedCategory;
+    const matchesSearch = event.title
+      .toLowerCase()
+      .includes(searchQuery.toLowerCase());
+    return matchesCategory && matchesSearch;
+  });
+
+  return (
+    <div className="dashboard-container">
+      {/* Navigation Bar */}
+      <header className="navbar">
+        <div className="nav-brand">
+          <span className="logo-icon">🎟️</span>
+          <h2>Vindowiev</h2>
+        </div>
+        <div className="search-bar">
+          <input
+            type="text"
+            placeholder="Search movies, concerts, events..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+        </div>
+        <nav className="nav-links">
+          <a href="#events" className="active">Explore</a>
+          <a href="#bookings">My Bookings</a>
+          <div className="user-profile">
+            <span className="avatar">JD</span>
+            <span className="username">John Doe</span>
+          </div>
+        </nav>
+      </header>
+
+      {/* Hero Banner */}
+      <section className="hero-banner">
+        <div className="hero-content">
+          <span className="badge">Featured Event</span>
+          <h1>Experience Live Events Like Never Before 🎭</h1>
+          <p>Book tickets for movies shows, music concerts, sports matches, and theater dramas instantly!</p>
+          <button className="btn-primary">Pre book now</button>
+        </div>
+      </section>
+
+      {/* Main Content Dashboard */}
+      <main className="dashboard-content">
+        <div className="content-header">
+          <h2>Upcoming Events</h2>
+          <div className="category-filters">
+            {CATEGORIES.map((cat) => (
+              <button
+                key={cat}
+                className={`filter-btn ${selectedCategory === cat ? 'active' : ''}`}
+                onClick={() => setSelectedCategory(cat)}
+              >
+                {cat}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Events Grid */}
+        <div className="events-grid">
+          {filteredEvents.length > 0 ? (
+            filteredEvents.map((event) => (
+              <div key={event.id} className="event-card">
+                <div className="card-image-wrapper">
+                  <img src={event.image} alt={event.title} />
+                  <span className="category-tag">{event.category}</span>
+                </div>
+                <div className="card-body">
+                  <div className="rating">⭐ {event.rating}</div>
+                  <h3 className="event-title">{event.title}</h3>
+                  <p className="event-info">📅 {event.date}</p>
+                  <p className="event-info">📍 {event.location}</p>
+                  <div className="card-footer">
+                    <span className="event-price">${event.price}</span>
+                    <button className="btn-secondary">Book Ticket</button>
+                  </div>
+                </div>
+              </div>
+            ))
+          ) : (
+            <div className="no-results">
+              <p>No events found matching your criteria.</p>
+            </div>
+          )}
+        </div>
+      </main>
+    </div>
+  );
+}
