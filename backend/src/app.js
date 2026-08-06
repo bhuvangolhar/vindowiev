@@ -7,6 +7,7 @@ const pool = require('../config/db');
 // Route imports
 const userRoutes = require('./routes/user.routes');
 const eventRoutes = require('./routes/event.routes');
+const bookingRoutes = require('./routes/booking.routes');
 
 const app = express();
 const PORT = process.env.PORT || 8000;
@@ -53,6 +54,7 @@ app.get('/', async (req, res, next) => {
 // 5. API Routes
 app.use('/api/users', userRoutes);
 app.use('/api/events', eventRoutes);
+app.use('/api/bookings', bookingRoutes);
 
 // 6. 404 Catch-All Route Handler
 app.use((req, res) => {
