@@ -4,6 +4,10 @@ const cors = require('cors');
 const helmet = require('helmet');
 const pool = require('../config/db');
 
+// Route imports
+const userRoutes = require('./routes/user.routes');
+const eventRoutes = require('./routes/event.routes');
+
 const app = express();
 const PORT = process.env.PORT || 8000;
 
@@ -18,7 +22,6 @@ const allowedOrigins = process.env.CLIENT_URL
 app.use(
   cors({
     origin: (origin, callback) => {
-      // Allow requests with no origin (like Postman or mobile apps)
       if (!origin || allowedOrigins.includes(origin)) {
         callback(null, true);
       } else {
@@ -29,7 +32,7 @@ app.use(
   })
 );
 
-// 3. Request Body Parsing with strict payload size limits (Prevents DoS attacks)
+// 3. Request Body Parsing with limits
 app.use(express.json({ limit: '10kb' }));
 app.use(express.urlencoded({ extended: true, limit: '10kb' }));
 
@@ -43,16 +46,20 @@ app.get('/', async (req, res, next) => {
       dbTime: result.rows[0].now,
     });
   } catch (err) {
-    next(err); // Pass error down to the global error handler
+    next(err);
   }
 });
 
-// 5. 404 Catch-All Route Handler
+// 5. API Routes
+app.use('/api/users', userRoutes);
+app.use('/api/events', eventRoutes);
+
+// 6. 404 Catch-All Route Handler
 app.use((req, res) => {
   res.status(404).json({ error: 'Route not found' });
 });
 
-// 6. Centralized Global Error Handler
+// 7. Centralized Global Error Handler
 app.use((err, req, res, next) => {
   console.error('[Error Details]:', err.stack || err.message);
 
@@ -62,12 +69,12 @@ app.use((err, req, res, next) => {
   });
 });
 
-// 7. Start Server
+// 8. Start Server
 const server = app.listen(PORT, () => {
   console.log(`Server running in ${process.env.NODE_ENV || 'development'} mode on http://localhost:${PORT}`);
 });
 
-// 8. Graceful Shutdown & Process Management
+// 9. Graceful Shutdown & Process Management
 const gracefulShutdown = (signal) => {
   console.log(`\n${signal} signal received. Closing HTTP server...`);
   server.close(async () => {
