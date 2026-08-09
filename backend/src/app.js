@@ -10,6 +10,7 @@ const eventRoutes = require('./routes/event.routes');
 const bookingRoutes = require('./routes/booking.routes');
 const seatRoutes = require('./routes/seat.routes');
 const paymentRoutes = require('./routes/payment.routes');
+const venueRoutes = require('./routes/venue.routes');
 
 const app = express();
 const PORT = process.env.PORT || 8000;
@@ -59,6 +60,7 @@ app.use('/api/events', eventRoutes);
 app.use('/api/bookings', bookingRoutes);
 app.use('/api/seats', seatRoutes);
 app.use('/api/payments', paymentRoutes);
+app.use('/api/venues', venueRoutes);
 
 // 6. 404 Catch-All Route Handler
 app.use((req, res) => {
